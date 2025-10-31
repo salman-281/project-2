@@ -33,8 +33,11 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                echo "Deploying to Vercel..."
-                bat 'npx vercel --prod --token %VERCEL_TOKEN% --confirm'
+                 echo "Deploying to Vercel..."
+                 bat '''
+                      set PATH=%WORKSPACE%\\node_modules\\.bin;%PATH%
+                      npx vercel --prod --token %VERCEL_TOKEN% --confirm
+                 '''
             }
         }
     }
