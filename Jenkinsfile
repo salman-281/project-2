@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS_20' // The name you configured under "Manage Jenkins" → "Global Tool Configuration"
+    }
+
     environment {
         VERCEL_TOKEN = credentials('VERCEL_TOKEN') // Jenkins credential ID
     }
@@ -8,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Pull the latest code from GitHub
+                echo "Checking out code from GitHub..."
                 git branch: 'main', url: 'https://github.com/salman-281/project-2.git'
             }
         }
@@ -16,32 +20,31 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo "Installing Node.js dependencies..."
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build Project') {
             steps {
                 echo "Building Next.js project..."
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
         stage('Deploy to Vercel') {
             steps {
                 echo "Deploying to Vercel..."
-                // Use your token to deploy to Vercel
-                sh 'npx vercel --prod --token $VERCEL_TOKEN --confirm'
+                bat 'npx vercel --prod --token %VERCEL_TOKEN% --confirm'
             }
         }
     }
 
     post {
         success {
-            echo "Deployment succeeded! 🎉"
+            echo "✅ Deployment succeeded! 🎉"
         }
         failure {
-            echo "Deployment failed! ❌"
+            echo "❌ Deployment failed!"
         }
     }
 }
